@@ -1,0 +1,6 @@
+---
+- name: Install package
+  ansible.builtin.apt:
+    name: "qbittorrent-nox"
+    state: present
+    update_cache: true

@@ -1,0 +1,14 @@
+---
+qbittorrent_user: qbittorrent
+qbittorrent_group: qbittorrent
+
+qbittorrent_systemd_name: qbittorrent-nox
+qbittorrent_systemd_unit_description: qBittorrent Headless Client
+qbittorrent_systemd_unit_wants: [network-online.target]
+qbittorrent_systemd_unit_after: [network-online.target, nss-lookup.target]
+qbittorrent_systemd_unit_requires: []
+
+qbittorrent_data_dir: /var/lib/qbittorrent
+qbittorrent_webui_port: 8080
+
+qbittorrent_config: []

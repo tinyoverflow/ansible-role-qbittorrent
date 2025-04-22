@@ -1,0 +1,8 @@
+---
+- name: Create qBittorrent data directory
+  ansible.builtin.file:
+    path: "{{ qbittorrent_data_dir }}"
+    state: directory
+    owner: "{{ qbittorrent_user }}"
+    group: "{{ qbittorrent_group }}"
+    mode: "0755"

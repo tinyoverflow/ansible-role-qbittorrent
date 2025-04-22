@@ -1,0 +1,55 @@
+---
+- name: Create systemd unit file for qBittorrent
+  become: true
+  community.general.ini_file:
+    path: "/etc/systemd/system/{{ qbittorrent_systemd_name }}.service"
+    section: "{{ item.section }}"
+    option: "{{ item.option }}"
+    value: "{{ item.value }}"
+    no_extra_spaces: true
+  loop:
+    # Unit section
+    - { section: Unit, option: Documentation, value: man:qbittorrent-nox(1) }
+    - {
+        section: Unit,
+        option: Description,
+        value: "{{ qbittorrent_systemd_unit_description }}",
+      }
+    - {
+        section: Unit,
+        option: Wants,
+        value: "{{ qbittorrent_systemd_unit_wants }}",
+      }
+    - {
+        section: Unit,
+        option: After,
+        value: "{{ qbittorrent_systemd_unit_after }}",
+      }
+    - {
+        section: Unit,
+        option: Requires,
+        value: "{{ qbittorrent_systemd_unit_requires | join(' ') }}",
+      }
+
+    # Service section
+    - { section: Service, option: Type, value: exec }
+    - { section: Service, option: User, value: "{{ qbittorrent_user }}" }
+    - { section: Service, option: Group, value: "{{ qbittorrent_group }}" }
+    - {
+        section: Service,
+        option: ExecStart,
+        value: "/usr/bin/qbittorrent-nox --profile={{ qbittorrent_data_dir }}",
+      }
+
+    # Install section
+    - { section: Install, option: WantedBy, value: "multi-user.target" }
+  register: systemd_unit
+
+- name: Ensure systemd service is enabled
+  become: true
+  ansible.builtin.systemd:
+    daemon_reload: "{{ systemd_unit.changed }}"
+    name: "{{ qbittorrent_systemd_name }}"
+    enabled: true
+    masked: false
+    state: started

@@ -1,0 +1,7 @@
+---
+- name: Install qBittorrent and dependencies
+  ansible.builtin.include_tasks:
+    file: qbittorrent/main.yml
+    apply:
+      tags: qbittorrent
+  tags: qbittorrent

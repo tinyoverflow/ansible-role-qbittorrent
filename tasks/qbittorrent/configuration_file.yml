@@ -1,0 +1,15 @@
+---
+- name: "Write configuration to qBittorrent.conf : {{ section.name }}"
+  become: true
+  ansible.builtin.ini_file:
+    path: "{{ qbittorrent_data_dir }}/qBittorrent/config/qBittorrent.conf"
+    section: "{{ section.name }}"
+    option: "{{ option.name }}"
+    value: "{{ option.value }}"
+    mode: "0644"
+    no_extra_spaces: true
+  loop: "{{ section.options | dict2items(key_name='name') }}"
+  loop_control:
+    loop_var: option
+  notify:
+    - Restart qBittorrent

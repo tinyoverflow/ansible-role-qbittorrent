@@ -1,0 +1,14 @@
+---
+- name: Create qBittorrent group
+  ansible.builtin.group:
+    name: "{{ qbittorrent_group }}"
+    system: true
+
+- name: Create qBittorrent user
+  ansible.builtin.user:
+    name: "{{ qbittorrent_user }}"
+    group: "{{ qbittorrent_group }}"
+    system: true
+    create_home: false
+    shell: /usr/sbin/nologin
+    home: "{{ qbittorrent_data_dir }}"

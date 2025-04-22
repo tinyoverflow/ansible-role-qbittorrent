@@ -1,0 +1,35 @@
+---
+- name: Create system user and group
+  ansible.builtin.include_tasks:
+    file: system_user.yml
+    apply:
+      tags: [system_user]
+  tags: [system_user]
+
+- name: Create data directory
+  ansible.builtin.include_tasks:
+    file: filesystem.yml
+    apply:
+      tags: [filesystem]
+  tags: [filesystem]
+
+- name: Install qBittorrent
+  ansible.builtin.include_tasks:
+    file: release.yml
+    apply:
+      tags: [release]
+  tags: [release]
+
+- name: Install and enable systemd service
+  ansible.builtin.include_tasks:
+    file: systemd.yml
+    apply:
+      tags: [systemd]
+  tags: [systemd]
+
+- name: Configure qBittorrent.conf
+  ansible.builtin.include_tasks:
+    file: configuration.yml
+    apply:
+      tags: [configuration]
+  tags: [configuration]

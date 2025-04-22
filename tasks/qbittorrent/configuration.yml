@@ -1,0 +1,26 @@
+---
+- name: Ensure configuration directory exists
+  become: true
+  ansible.builtin.file:
+    path: "{{ qbittorrent_data_dir }}/qBittorrent/config"
+    state: directory
+    owner: "{{ qbittorrent_user }}"
+    group: "{{ qbittorrent_group }}"
+    mode: "0755"
+
+- name: Compile configuration dictionary
+  ansible.builtin.set_fact:
+    _qbittorrent_config: "{{ qbittorrent_config | default({}) | combine(_config_override, recursive=True) }}"
+  vars:
+    _config_override:
+      LegalNotice:
+        Accepted: "true"
+      Preferences:
+        WebUI\Port: "{{ qbittorrent_webui_port }}"
+
+- name: Write configuration file
+  ansible.builtin.include_tasks:
+    file: configuration_file.yml
+  loop: "{{ _qbittorrent_config | dict2items(key_name='name', value_name='options') }}"
+  loop_control:
+    loop_var: section

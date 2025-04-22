@@ -1,0 +1,6 @@
+---
+- name: Restart qBittorrent
+  become: true
+  ansible.builtin.systemd:
+    name: qbittorrent-nox
+    state: restarted
