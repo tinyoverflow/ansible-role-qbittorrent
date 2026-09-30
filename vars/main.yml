@@ -1,0 +1,1 @@
+qbittorrent_conf_file: "{{ qbittorrent_data_dir }}/qBittorrent/config/qBittorrent.conf"

@@ -1,6 +1,28 @@
 ---
-- name: Restart qBittorrent
+- name: Stop qBittorrent
   become: true
   ansible.builtin.systemd:
-    name: qbittorrent-nox
-    state: restarted
+    name: "{{ qbittorrent_systemd_name }}"
+    state: stopped
+  listen:
+    - Config file changed
+
+- name: Overwrite original configuration file with modified one
+  become: true
+  ansible.builtin.copy:
+    src: "{{ qbittorrent_conf_copy.dest }}"
+    dest: "{{ qbittorrent_conf_copy.src }}"
+    remote_src: true
+    owner: "{{ qbittorrent_user }}"
+    group: "{{ qbittorrent_group }}"
+    mode: "0640"
+  listen:
+    - Config file changed
+
+- name: Start qBittorrent
+  become: true
+  ansible.builtin.systemd:
+    name: "{{ qbittorrent_systemd_name }}"
+    state: started
+  listen:
+    - Config file changed

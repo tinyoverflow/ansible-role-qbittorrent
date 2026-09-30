@@ -18,6 +18,31 @@
       Preferences:
         WebUI\Port: "{{ qbittorrent_webui_port }}"
 
+- name: Make sure configuration file exists
+  become: true
+  ansible.builtin.file:
+    path: "{{ qbittorrent_conf_file }}"
+    state: touch
+    owner: "{{ qbittorrent_user }}"
+    group: "{{ qbittorrent_group }}"
+    mode: "0640"
+
+# Make a temporary configuration file we can edit.
+# Otheriwse qbt will overwrite it when stopped.
+# We can't write to the one qBittorrent.conf directly either.
+# because it might be overwritten while we're editing it.
+# We want to restart the service only if the config has changed.
+# so stopping it just to write the configuration isn't an option.
+- name: Make temporary configuration file to edit
+  become: true
+  ansible.builtin.copy:
+    src: "{{ qbittorrent_data_dir }}/qBittorrent/config/qBittorrent.conf"
+    dest: "{{ qbittorrent_data_dir }}/qBittorrent/config/qBittorrent.conf.tmp"
+    remote_src: true
+    mode: "0600"
+  register: qbittorrent_conf_copy
+
+# Populate this temporary copy with the settings
 - name: Write configuration file
   ansible.builtin.include_tasks:
     file: configuration_file.yml
